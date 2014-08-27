@@ -2,25 +2,27 @@
 <resources>
 
     <string name="app_name">Rabbit</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="action_edit_friends">Edit friends</string>
+    <string name="action_logout">Log out</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_sign_in">Sign In</string>
-    <string name="title_activity_sign_up">Sign Up</string>
-
-
-
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="sign_in">Log In</string>
-    <string name="sign_up">Sign Up</string>
     <string name="email">Email</string>
+    <string name="empty_inbox">No new messages...</string>
+    <string name="empty_friends">Add friends to begin...</string>
     <string name="error_dialog_title">Obs something went wrong</string>
     <string name="error_dialog_message">Please fill out the fields</string>
-    <string name="reg_dialog_title">Problems with registration</string>
+    <string name="error_dialog_message_friends">Could not find your friends</string>
     <string name="login_error_message">Problems with signing in..</string>
-    <string name="action_logout">Log out</string>
+    <string name="menu">Menu</string>
+    <string name="password">Password</string>
+    <string name="reg_dialog_title">Problems with registration</string>
+    <string name="sign_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_error_message">Problems with signing up..</string>
+    <string name="title_activity_sign_in">Sign In</string>
+    <string name="title_activity_sign_up">Sign Up</string>
+    <string name="title_section1">Inbox</string>
+    <string name="title_section2">Friends</string>
+    <string name="username">Username</string>
+    <string name="title_activity_edit_friends">Edit Frieds</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package amgh.no.rabbitapp.signup;
+package amgh.no.rabbitapp.activities.signup;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +17,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-import amgh.no.rabbitapp.MainActivity;
+import amgh.no.rabbitapp.activities.MainActivity;
 import amgh.no.rabbitapp.R;
 import amgh.no.rabbitapp.hepler.Helper;
-import amgh.no.rabbitapp.user.User;
 
 public class SignUpActivity extends Activity {
 
@@ -39,6 +40,7 @@ public class SignUpActivity extends Activity {
         @Override
         public void done(ParseException e) {
             mProgressBar.setVisibility(View.INVISIBLE);
+            setProgressBarIndeterminateVisibility(false);
             if (e == null) {
                 Log.v(TAG, "Registered user");
                 Toast.makeText(SignUpActivity.this,
@@ -51,7 +53,7 @@ public class SignUpActivity extends Activity {
             }
             else {
                 Helper.showErrorDialog(SignUpActivity.this, R.string.reg_dialog_title,
-                        R.string.error_dialog_message);
+                        R.string.sign_up_error_message);
                 Log.v(TAG, getString(R.string.reg_dialog_title));
                 Log.v(TAG, e.getMessage());
             }
@@ -72,7 +74,11 @@ public class SignUpActivity extends Activity {
                         R.string.error_dialog_message);
             } else {
                 //Create a new user.
-                User newUser = new User(username, password, email);
+                setProgressBarIndeterminateVisibility(true);
+                ParseUser newUser = new ParseUser();
+                newUser.setUsername(username);
+                newUser.setPassword(password);
+                newUser.setEmail(email);
                 mProgressBar.setVisibility(View.VISIBLE);
                 newUser.signUpInBackground(signUpCallback);
             }
@@ -82,6 +88,7 @@ public class SignUpActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_signup);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 

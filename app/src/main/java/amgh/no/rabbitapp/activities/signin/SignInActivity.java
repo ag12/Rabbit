@@ -1,4 +1,4 @@
-package amgh.no.rabbitapp.signin;
+package amgh.no.rabbitapp.activities.signin;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,10 +20,10 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
-import amgh.no.rabbitapp.MainActivity;
+import amgh.no.rabbitapp.activities.MainActivity;
 import amgh.no.rabbitapp.R;
 import amgh.no.rabbitapp.hepler.Helper;
-import amgh.no.rabbitapp.signup.SignUpActivity;
+import amgh.no.rabbitapp.activities.signup.SignUpActivity;
 
 
 public class SignInActivity extends Activity {
@@ -40,6 +41,7 @@ public class SignInActivity extends Activity {
         public void done(ParseUser user, ParseException e) {
             mProgressBar.setVisibility(View.INVISIBLE);
             mSingInButton.setOnClickListener(singInButtonListener);
+            setProgressBarIndeterminateVisibility(false);
             if (user != null) {
 
                 Log.d(TAG, e == null ? "JA NULL" : "nie");
@@ -72,6 +74,7 @@ public class SignInActivity extends Activity {
             String password = Helper.trimEditTextInput(mPassword);
             if (Helper.isValid(new String[]{username, password})) {
                 mSingInButton.setOnClickListener(null);
+                setProgressBarIndeterminateVisibility(true);
                 mProgressBar.setVisibility(View.VISIBLE);
                 ParseUser.logInInBackground(username, password, logInCallbackListener);
             } else {
@@ -93,6 +96,7 @@ public class SignInActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_signin);
 
         mSignUpTextView = (TextView) findViewById(R.id.signin_txt);
