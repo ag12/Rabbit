@@ -85,16 +85,18 @@ public class UserRepository {
         return mUserRelation;
     }
     public void getFriendsFromRepository(FindCallback<ParseUser> findCallback) {
-        //ParseQuery<ParseUser> query = this.mUserRelation.getQuery();
-
-        this.mUserRelation.getQuery().findInBackground(findCallback);
+        ParseQuery<ParseUser> query = this.mUserRelation.getQuery();
+        query.orderByAscending(KEY_USERNAME);
+        query.findInBackground(findCallback);
     }
-    public void setUserRelation(ParseUser user, SaveCallback saveCallback) {
+    public void setUserRelation(ParseUser user) {
         this.mUserRelation.add(user);
+
+    }
+    public void saveUser(SaveCallback saveCallback){
         this.mCurrentUSer.saveInBackground(saveCallback);
     }
-    public void removeUserRelation(ParseUser friend, SaveCallback saveCallback){
+    public void removeUserRelation(ParseUser friend){
         this.mUserRelation.remove(friend);
-        this.mCurrentUSer.saveInBackground(saveCallback);
     }
 }

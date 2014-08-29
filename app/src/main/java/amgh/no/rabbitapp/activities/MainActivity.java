@@ -18,17 +18,23 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.parse.ParseAnalytics;
 import com.parse.ParseUser;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import amgh.no.rabbitapp.R;
 import amgh.no.rabbitapp.activities.friend.EditFriendsActivity;
+import amgh.no.rabbitapp.activities.recipient.RecipientActivity;
 import amgh.no.rabbitapp.activities.signin.SignInActivity;
 import amgh.no.rabbitapp.adapters.SectionsPagerAdapter;
+import amgh.no.rabbitapp.parse.Messenger;
 
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -43,7 +49,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private final static int MEDIA_TYPE_IMAGE = 4;
     private final static int MEDIA_TYPE_VIDEO = 5;
 
+    private final static int VIDEO_SIZE_LIMIT = 1024*1024*10; // 10MB
+
     private Uri mMediaUri;
+    private AlertDialog mDialog;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -64,6 +73,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_main);
+
+        Log.i(TAG, getIntent() == null ? "null" : "IKKE");
+        ParseAnalytics.trackAppOpened(getIntent());
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -103,9 +115,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             navigateToLogIn();
         } else {
-            /*Toast.makeText(this, "Signed in as " + ParseUser.getCurrentUser().getUsername(),
-                    Toast.LENGTH_LONG).show();
-            Log.i(TAG, ParseUser.getCurrentUser().getUsername());*/
+            Log.i(TAG, ParseUser.getCurrentUser().getUsername());
         }
 
 
@@ -135,23 +145,30 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         int id = item.getItemId();
         switch (id) {
             case R.id.action_settings:
+                Log.i(TAG, "settinga");
                 return true;
             case R.id.action_logout:
                 ParseUser.logOut();
                 navigateToLogIn();
+                Log.i(TAG, "logut");
                 return true;
             case R.id.action_friends:
                 Intent intent = new Intent(this, EditFriendsActivity.class);
                 startActivity(intent);
+                Log.i(TAG, "friend");
+                return true;
             case R.id.action_camera:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setItems(getResources().getStringArray(R.array.camera_choices),
-                        mDialogOnClickListener).create().show();
-
-
+                        mDialogOnClickListener);
+                mDialog = builder.create();
+                mDialog.show();
+                Log.i(TAG, "Create");
+                return true;
             default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -186,19 +203,50 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Log.i(TAG, "onActivityResult ok + SELECT video or picture");
                 if (data == null) {
                     Log.i(TAG, "onActivityResult ok + SELECT video or picture but data was null");
-                   Toast.makeText(this, getString(R.string.error_dialog_title), Toast.LENGTH_LONG).show();
+                    logToast(getString(R.string.error_dialog_title));
                 } else {
                     mMediaUri = data.getData();
                     Log.i(TAG, "onActivityResult ok + SELECT video or picture data not null");
 
                 }
-
+                Log.i(TAG, "Media uri" + mMediaUri);
                 if (requestCode == PIC_VIDEO_REQUEST) {
                     //Check the size
+                    int fileSize = 0;
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = getContentResolver().openInputStream(mMediaUri);
+                        fileSize = inputStream.available();
+
+                    } catch (FileNotFoundException e) {
+                        logToast(getString(R.string.toast_error_opening_file));
+                        Log.i(TAG, "FileNotFoundException " + e.getMessage());
+
+                    } catch (IOException e) {
+                        logToast(getString(R.string.toast_error_opening_file));
+                        Log.i(TAG, "IOException " + e.getMessage());
+                    } finally {
+                        try {
+                            inputStream.close();
+                        }catch (IOException e){
+                            Log.i(TAG, "IOException closing inputStream" + e.getMessage());
+                        }
+                    }
+                    if (fileSize >= VIDEO_SIZE_LIMIT) {
+                        logToast(getString(R.string.toast_file_size_large));
+                    }
                 }
-
-
             }
+            Intent recipientIntent = new Intent(this, RecipientActivity.class);
+            recipientIntent.setData(mMediaUri);
+            if (requestCode == PIC_PHOTO_REQUEST || requestCode == TAKE_PHOTO_REQUEST){
+                recipientIntent.putExtra(Messenger.KEY_FILE_TYPE, Messenger.TYPE_IMAGE);
+            } else {
+                recipientIntent.putExtra(Messenger.KEY_FILE_TYPE, Messenger.TYPE_VIDEO);
+            }
+            startActivity(recipientIntent);
+
+            Log.i(TAG, "Alltid");
         } else if (resultCode == RESULT_CANCELED) {
             Log.i(TAG, "onActivityResult cancel");
         } else if (resultCode == RESULT_FIRST_USER) {
@@ -263,8 +311,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 MediaStore.ACTION_IMAGE_CAPTURE);
         mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
         if (mMediaUri == null) {
-            Toast.makeText(MainActivity.this,
-                    getString(R.string.toast_error_external_storage), Toast.LENGTH_LONG).show();
+            logToast(getString(R.string.toast_error_external_storage));
         } else {
             photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
             startActivityForResult(photoIntent, TAKE_PHOTO_REQUEST);
@@ -276,8 +323,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 MediaStore.ACTION_VIDEO_CAPTURE);
         mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
         if (mMediaUri == null) {
-            Toast.makeText(MainActivity.this,
-                    getString(R.string.toast_error_external_storage), Toast.LENGTH_LONG).show();
+            logToast(getString(R.string.toast_error_external_storage));
         } else {
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
             //Setting limit and quality constants
@@ -295,7 +341,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void requestVideo() {
         Intent selectVideo = new Intent(Intent.ACTION_GET_CONTENT);
         selectVideo.setType("video/*");
-        Toast.makeText(this, getString(R.string.video_file_warning), Toast.LENGTH_LONG).show();
+        logToast(getString(R.string.toast_video_file_warning));
         startActivityForResult(selectVideo, PIC_VIDEO_REQUEST);
     }
 
@@ -319,10 +365,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         case 3:
                             //choose video
                             requestVideo();
+
                             break;
                         default:
                             break;
+
                     }
+                    mDialog.dismiss();
                 }
+
             };
+    private void logToast(String s){
+        Toast.makeText(this,
+                s, Toast.LENGTH_LONG).show();
+    }
+    private void shortToast(String s){
+        Toast.makeText(this,
+                s, Toast.LENGTH_SHORT).show();
+    }
 }

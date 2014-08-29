@@ -1,4 +1,4 @@
-package amgh.no.rabbitapp.fragments;
+package amgh.no.rabbitapp.activities.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;

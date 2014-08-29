@@ -4,11 +4,13 @@
 
     <uses-feature android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-feature android:name="android.hardware.Camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.Camera"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".app.RabbitApplication"
@@ -44,6 +46,15 @@
         <activity
             android:name=".activities.friend.EditFriendsActivity"
             android:label="@string/title_activity_edit_friends"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="amgh.no.rabbitapp.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.recipient.RecipientActivity"
+            android:label="@string/title_activity_recipient"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait">
             <meta-data

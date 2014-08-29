@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity$PlaceholderFragment">
+    tools:context="amgh.no.rabbitapp.activities.recipient.RecipientActivity">
+
 
     <ListView
         android:layout_width="match_parent"
@@ -10,9 +11,19 @@
         android:id="@android:id/list"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@android:id/empty"
-        android:text="@string/empty_friends"/>
+        android:text="@string/empty_recipients_message"
+        android:id="@android:id/empty"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

@@ -13,6 +13,7 @@
     <string name="error_dialog_title">Obs something went wrong</string>
     <string name="error_dialog_message">Please fill out the fields</string>
     <string name="error_dialog_message_friends">Could not find your friends</string>
+    <string name="general_error">Sorry there was an error</string>
     <string name="login_error_message">Problems with signing in..</string>
     <string name="menu">Menu</string>
     <string name="not_required">Not required</string>
@@ -27,10 +28,10 @@
     <string name="title_section1">Inbox</string>
     <string name="title_section2">Friends</string>
     <string name="toast_error_external_storage">There was a problem accessing your devices external storage</string>
-
+    <string name="toast_error_opening_file">There was a problem with the selected file</string>
+    <string name="toast_video_file_warning">The selected video must be less than 10 MB</string>
     <string name="username">Username</string>
-    <string name="general_error">Sorry there was an error</string>
-    <string name="video_file_warning">The selected video must be less than 10 MB</string>
+    <string name="toast_file_size_large">File size is to large!</string>
 
     <string-array name="camera_choices">
         <item>Take Picture</item>
@@ -38,5 +39,12 @@
         <item>Choose Picture</item>
         <item>Choose Video</item>
     </string-array>
+
+    <string name="title_activity_recipient">Pick friends</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="empty_recipients_message">Choose some friends first!</string>
+    <string name="action_send">Send</string>
+    <string name="error_dialog_select_button">Could not collect the selected file</string>
+    <string name="error_dialog_send_message">Oooooob sorry, could not send your message</string>
 
 </resources>

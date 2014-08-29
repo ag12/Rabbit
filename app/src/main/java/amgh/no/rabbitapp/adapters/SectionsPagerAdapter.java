@@ -9,8 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.Locale;
 
 import amgh.no.rabbitapp.R;
-import amgh.no.rabbitapp.fragments.FriendsFragment;
-import amgh.no.rabbitapp.fragments.InboxFragment;
+import amgh.no.rabbitapp.activities.fragments.FriendsFragment;
+import amgh.no.rabbitapp.activities.fragments.InboxFragment;
 
 /**
  * A {@link android.support.v4.app.FragmentPagerAdapter} that returns a fragment corresponding to
