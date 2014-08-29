@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+
+    <item android:icon="@drawable/ic_action_overflow"
+        android:id="@+id/action_menu"
+        android:orderInCategory="4"
+        android:menuCategory="system"
+        android:title="@string/menu"
+        android:showAsAction="ifRoom">
+        <menu>
+    <item android:id="@+id/action_logout"
+        android:title="@string/action_logout"
+        android:menuCategory="system"
+        android:orderInCategory="3"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_friends"
+        android:title="@string/action_edit_friends"
+        android:menuCategory="system"
+        android:orderInCategory="2"
+        android:showAsAction="never" />
+        </menu>
+    </item>
+
+    <item android:id="@+id/action_camera"
+        android:title="@string/action_camera"
+        android:icon="@drawable/ic_action_camera"
+        android:orderInCategory="1"
+        android:menuCategory="system"
+        android:showAsAction="always" />
+
+</menu>

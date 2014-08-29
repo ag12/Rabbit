@@ -31,6 +31,7 @@ public class SignUpActivity extends Activity {
     protected EditText mUsername;
     protected EditText mPassword;
     private EditText mEmail;
+    private EditText mBio;
     protected Button mSignUpButton;
     private ProgressBar mProgressBar;
     private AlertDialog mAlertDialog;
@@ -68,6 +69,7 @@ public class SignUpActivity extends Activity {
             String username = Helper.trimEditTextInput(mUsername);
             String password = Helper.trimEditTextInput(mPassword);
             String email = Helper.trimEditTextInput(mEmail);
+            String bio = Helper.trimEditTextInput(mBio);
             String[] strings = {username, password, email};
             if (!Helper.isValid(strings)) {
                 Helper.showErrorDialog(SignUpActivity.this,R.string.error_dialog_title,
@@ -79,6 +81,7 @@ public class SignUpActivity extends Activity {
                 newUser.setUsername(username);
                 newUser.setPassword(password);
                 newUser.setEmail(email);
+                newUser.put("bio", bio);
                 mProgressBar.setVisibility(View.VISIBLE);
                 newUser.signUpInBackground(signUpCallback);
             }
@@ -96,6 +99,7 @@ public class SignUpActivity extends Activity {
         mProgressBar.setVisibility(View.INVISIBLE);
         mUsername = (EditText) findViewById(R.id.username);
         mPassword = (EditText) findViewById(R.id.password);
+        mBio = (EditText) findViewById(R.id.bio);
         mEmail = (EditText) findViewById(R.id.email);
 
         mSignUpButton = (Button) findViewById(R.id.signup);
