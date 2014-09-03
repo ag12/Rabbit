@@ -22,7 +22,7 @@ import com.parse.SignUpCallback;
 
 import amgh.no.rabbitapp.activities.MainActivity;
 import amgh.no.rabbitapp.R;
-import amgh.no.rabbitapp.hepler.Helper;
+import amgh.no.rabbitapp.apphelper.Helper;
 
 public class SignUpActivity extends Activity {
 
@@ -33,10 +33,62 @@ public class SignUpActivity extends Activity {
     private EditText mEmail;
     private EditText mBio;
     protected Button mSignUpButton;
+    protected Button mCancelButton;
     private ProgressBar mProgressBar;
     private AlertDialog mAlertDialog;
 
-    protected SignUpCallback signUpCallback = new SignUpCallback() {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setContentView(R.layout.activity_signup);
+        getActionBar().hide();
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mUsername = (EditText) findViewById(R.id.username);
+        mPassword = (EditText) findViewById(R.id.password);
+        mBio = (EditText) findViewById(R.id.bio);
+        mEmail = (EditText) findViewById(R.id.email);
+
+        mSignUpButton = (Button) findViewById(R.id.signup);
+        mSignUpButton.setOnClickListener(signUpUserListener);
+
+        mCancelButton = (Button) findViewById(R.id.cancel);
+        mCancelButton.setOnClickListener(cancelListener);
+
+
+    }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.default_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private View.OnClickListener cancelListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finish();
+        }
+    };
+    private SignUpCallback signUpCallback = new SignUpCallback() {
 
         @Override
         public void done(ParseException e) {
@@ -55,13 +107,11 @@ public class SignUpActivity extends Activity {
             else {
                 Helper.showErrorDialog(SignUpActivity.this, R.string.reg_dialog_title,
                         R.string.sign_up_error_message);
-                Log.v(TAG, getString(R.string.reg_dialog_title));
-                Log.v(TAG, e.getMessage());
             }
         }
     };
 
-    protected View.OnClickListener signUpUserListener = new View.OnClickListener() {
+    private View.OnClickListener signUpUserListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -87,44 +137,4 @@ public class SignUpActivity extends Activity {
             }
         }
     };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_signup);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mUsername = (EditText) findViewById(R.id.username);
-        mPassword = (EditText) findViewById(R.id.password);
-        mBio = (EditText) findViewById(R.id.bio);
-        mEmail = (EditText) findViewById(R.id.email);
-
-        mSignUpButton = (Button) findViewById(R.id.signup);
-        mSignUpButton.setOnClickListener(signUpUserListener);
-
-    }
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.default_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

@@ -18,8 +18,8 @@ import com.parse.SaveCallback;
 import java.util.List;
 
 import amgh.no.rabbitapp.R;
-import amgh.no.rabbitapp.hepler.Helper;
-import amgh.no.rabbitapp.parse.UserRepository;
+import amgh.no.rabbitapp.apphelper.Helper;
+import amgh.no.rabbitapp.parse.repository.UserRepository;
 
 public class EditFriendsActivity extends ListActivity {
 
@@ -36,21 +36,17 @@ public class EditFriendsActivity extends ListActivity {
             getListView().setVisibility(View.VISIBLE);
             if (e == null) {
                 //Success
-                Log.i(TAG, "Gott all friends ");
                 mUserRepository.setFriends(parseUsers);
                 int i = 0;
                 for(ParseUser user : mUserRepository.getUsers()) {
                     for(ParseUser friend : mUserRepository.getFriends()) {
                         if (friend.getObjectId().equals(user.getObjectId())) {
                             getListView().setItemChecked(i, true);
-                            Log.i(TAG, "2i " + i);
                         }
                     }
-                    Log.i(TAG, "1i " + i);
                     i++;
                 }
             } else {
-                Log.i(TAG, "problems getting friends " + e.getMessage());
             }
         }
     };
@@ -62,7 +58,6 @@ public class EditFriendsActivity extends ListActivity {
                 //Success
                 setProgressBarIndeterminateVisibility(false);
                 mUserRepository.setUsers(parseUsers);
-                Log.i(TAG, mUserRepository.getUserNames().length + " lengde");
                 mAdapter = new ArrayAdapter<String>(EditFriendsActivity.this,
                         android.R.layout.simple_list_item_checked, mUserRepository.getUserNames());
                 setListAdapter(mAdapter);
@@ -95,7 +90,6 @@ public class EditFriendsActivity extends ListActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_edit_friends);
         mUserRepository = new UserRepository();
-        Log.i(TAG, getIntent() == null ? "nwull" : "IKwKE");
         getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 

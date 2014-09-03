@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -33,8 +32,9 @@ import amgh.no.rabbitapp.R;
 import amgh.no.rabbitapp.activities.friend.EditFriendsActivity;
 import amgh.no.rabbitapp.activities.recipient.RecipientActivity;
 import amgh.no.rabbitapp.activities.signin.SignInActivity;
+import amgh.no.rabbitapp.activities.sms.SmsActivity;
 import amgh.no.rabbitapp.adapters.SectionsPagerAdapter;
-import amgh.no.rabbitapp.parse.Messenger;
+import amgh.no.rabbitapp.parse.entity.Message;
 
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -45,28 +45,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private final static int PIC_PHOTO_REQUEST = 2;
     private final static int PIC_VIDEO_REQUEST = 3;
 
-
-    private final static int MEDIA_TYPE_IMAGE = 4;
-    private final static int MEDIA_TYPE_VIDEO = 5;
+    private final static int MEDIA_TYPE_IMAGE = 5;
+    private final static int MEDIA_TYPE_VIDEO = 6;
 
     private final static int VIDEO_SIZE_LIMIT = 1024*1024*10; // 10MB
 
     private Uri mMediaUri;
     private AlertDialog mDialog;
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v13.app.FragmentStatePagerAdapter}.
-     */
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,24 +99,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
         if (ParseUser.getCurrentUser() == null) {
-
             navigateToLogIn();
         } else {
-            Log.i(TAG, ParseUser.getCurrentUser().getUsername());
         }
 
 
     }
-
-    private void navigateToLogIn() {
-
-        Intent intent = new Intent(this, SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -164,6 +139,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 mDialog = builder.create();
                 mDialog.show();
                 Log.i(TAG, "Create");
+                return true;
+            case R.id.action_sms:
+                requestSms();
                 return true;
             default:
                 break;
@@ -203,7 +181,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Log.i(TAG, "onActivityResult ok + SELECT video or picture");
                 if (data == null) {
                     Log.i(TAG, "onActivityResult ok + SELECT video or picture but data was null");
-                    logToast(getString(R.string.error_dialog_title));
+                    longToast(getString(R.string.error_dialog_title));
                 } else {
                     mMediaUri = data.getData();
                     Log.i(TAG, "onActivityResult ok + SELECT video or picture data not null");
@@ -219,11 +197,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         fileSize = inputStream.available();
 
                     } catch (FileNotFoundException e) {
-                        logToast(getString(R.string.toast_error_opening_file));
+                        longToast(getString(R.string.toast_error_opening_file));
                         Log.i(TAG, "FileNotFoundException " + e.getMessage());
 
                     } catch (IOException e) {
-                        logToast(getString(R.string.toast_error_opening_file));
+                        longToast(getString(R.string.toast_error_opening_file));
                         Log.i(TAG, "IOException " + e.getMessage());
                     } finally {
                         try {
@@ -233,16 +211,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         }
                     }
                     if (fileSize >= VIDEO_SIZE_LIMIT) {
-                        logToast(getString(R.string.toast_file_size_large));
+                        longToast(getString(R.string.toast_file_size_large));
                     }
                 }
             }
             Intent recipientIntent = new Intent(this, RecipientActivity.class);
             recipientIntent.setData(mMediaUri);
             if (requestCode == PIC_PHOTO_REQUEST || requestCode == TAKE_PHOTO_REQUEST){
-                recipientIntent.putExtra(Messenger.KEY_FILE_TYPE, Messenger.TYPE_IMAGE);
+                recipientIntent.putExtra(Message.KEY_FILE_TYPE, Message.TYPE_IMAGE);
             } else {
-                recipientIntent.putExtra(Messenger.KEY_FILE_TYPE, Messenger.TYPE_VIDEO);
+                recipientIntent.putExtra(Message.KEY_FILE_TYPE, Message.TYPE_VIDEO);
             }
             startActivity(recipientIntent);
 
@@ -311,7 +289,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 MediaStore.ACTION_IMAGE_CAPTURE);
         mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
         if (mMediaUri == null) {
-            logToast(getString(R.string.toast_error_external_storage));
+            longToast(getString(R.string.toast_error_external_storage));
         } else {
             photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
             startActivityForResult(photoIntent, TAKE_PHOTO_REQUEST);
@@ -323,7 +301,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 MediaStore.ACTION_VIDEO_CAPTURE);
         mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
         if (mMediaUri == null) {
-            logToast(getString(R.string.toast_error_external_storage));
+            longToast(getString(R.string.toast_error_external_storage));
         } else {
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
             //Setting limit and quality constants
@@ -341,8 +319,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void requestVideo() {
         Intent selectVideo = new Intent(Intent.ACTION_GET_CONTENT);
         selectVideo.setType("video/*");
-        logToast(getString(R.string.toast_video_file_warning));
+        longToast(getString(R.string.toast_video_file_warning));
         startActivityForResult(selectVideo, PIC_VIDEO_REQUEST);
+    }
+    private void requestSms(){
+        Intent smsIntent = new Intent(this, SmsActivity.class);
+        startActivity(smsIntent);
     }
 
     private DialogInterface.OnClickListener mDialogOnClickListener =
@@ -365,7 +347,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         case 3:
                             //choose video
                             requestVideo();
-
                             break;
                         default:
                             break;
@@ -375,7 +356,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 }
 
             };
-    private void logToast(String s){
+    private void longToast(String s){
         Toast.makeText(this,
                 s, Toast.LENGTH_LONG).show();
     }
@@ -383,4 +364,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         Toast.makeText(this,
                 s, Toast.LENGTH_SHORT).show();
     }
+    private void navigateToLogIn() {
+
+        Intent intent = new Intent(this, SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+
 }

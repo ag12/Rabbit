@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import amgh.no.rabbitapp.parse.Messenger;
+import amgh.no.rabbitapp.parse.entity.Message;
 
 public class FileHelper {
 
@@ -84,7 +84,7 @@ public class FileHelper {
     public static String getFileName(Context context, Uri uri, String fileType) {
         String fileName = "uploaded_file.";
 
-        if (fileType.equals(Messenger.TYPE_IMAGE)) {
+        if (fileType.equals(Message.TYPE_IMAGE)) {
             fileName += "png";
         }
         else {

@@ -31,4 +31,11 @@
         android:menuCategory="system"
         android:showAsAction="always" />
 
+    <item android:id="@+id/action_sms"
+        android:title="@string/action_sms"
+        android:icon="@drawable/ic_action_edit"
+        android:orderInCategory="0"
+        android:menuCategory="system"
+        android:showAsAction="always" />
+
 </menu>

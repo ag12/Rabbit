@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -18,8 +18,8 @@ import com.parse.ParseUser;
 import java.util.List;
 
 import amgh.no.rabbitapp.R;
-import amgh.no.rabbitapp.activities.helper.ActivityHelper;
-import amgh.no.rabbitapp.parse.UserRepository;
+import amgh.no.rabbitapp.activities.acthelper.ActivityHelper;
+import amgh.no.rabbitapp.parse.repository.UserRepository;
 
 public class FriendsFragment extends ListFragment {
 
@@ -54,7 +54,6 @@ public class FriendsFragment extends ListFragment {
         //To not exhausting the main thread,
         GetFriendsInBackground getFriendsInBackground = new GetFriendsInBackground();
         getFriendsInBackground.execute();
-        Log.i(TAG, "Reumse");
     }
 
     @Override
@@ -82,6 +81,7 @@ public class FriendsFragment extends ListFragment {
                                 mUserRepository.getFriendNames());
                 setListAdapter(arrayAdapter);
             } else {
+                Toast.makeText(getActivity(), "Problem with the backend", Toast.LENGTH_LONG).show();
             }
 
         }

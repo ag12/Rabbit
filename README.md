@@ -1,3 +1,4 @@
+Android experimental app
 To run you have to create this class, using your parse client and server ids
 
 package amgh.no.rabbit;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Rabbit</string>
+    <string name="app_name">sNaPrApE</string>
     <string name="action_camera">Camera</string>
     <string name="action_edit_friends">Edit friends</string>
     <string name="action_logout">Log out</string>
@@ -19,9 +19,10 @@
     <string name="not_required">Not required</string>
     <string name="password">Password</string>
     <string name="reg_dialog_title">Problems with registration</string>
-    <string name="sign_in">Log In</string>
-    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_up">SIGN UP</string>
     <string name="sign_up_error_message">Problems with signing up..</string>
+    <string name="sign_up_text">Don\'t have an account? Sign up!</string>
     <string name="title_activity_edit_friends">Choose your friends</string>
     <string name="title_activity_sign_in">Sign In</string>
     <string name="title_activity_sign_up">Sign Up</string>
@@ -46,5 +47,16 @@
     <string name="action_send">Send</string>
     <string name="error_dialog_select_button">Could not collect the selected file</string>
     <string name="error_dialog_send_message">Oooooob sorry, could not send your message</string>
+    <string name="title_activity_sms">Message</string>
+    <string name="sms_go">Go</string>
+    <string name="sms_hint">Your message</string>
+    <string name="action_sms">Sms</string>
+    <string name="error_title_some_dialog">Obs something went very wrong</string>
+    <string name="description">Content</string>
+    <string name="title_activity_view_image">Rabbit</string>
+    <string name="content_description">Content description background</string>
+    <string name="sub_title">Experimental project</string>
+    <string name="cancel">CANCEL</string>
+    <string name="content_description_divider">Button divider</string>
 
 </resources>

@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".app.RabbitApplication"
+        android:name=".main.RabbitApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -55,6 +55,24 @@
         <activity
             android:name=".activities.recipient.RecipientActivity"
             android:label="@string/title_activity_recipient"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="amgh.no.rabbitapp.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.sms.SmsActivity"
+            android:label="@string/title_activity_sms"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="amgh.no.rabbitapp.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.recipient.ViewImageActivity"
+            android:label="@string/title_activity_view_image"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait">
             <meta-data

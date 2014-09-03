@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AuthBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="amgh.no.rabbitapp.activities.signup.SignUpActivity">
+
+    <include layout="@layout/auth_common" />
+
+    <LinearLayout
+        android:id="@+id/edit_txt_layout"
+        style="@style/AuthFieldController"
+        android:layout_width="400dp"
+        android:layout_centerHorizontal="true">
+
+        <EditText
+            android:id="@+id/username"
+            style="@style/AuthEditText"
+            android:hint="@string/username">
+
+            <requestFocus />
+        </EditText>
+
+
+        <EditText
+            android:id="@+id/password"
+            style="@style/AuthEditText"
+            android:layout_below="@+id/username"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
+
+
+        <EditText
+            android:id="@+id/email"
+            style="@style/AuthEditText"
+            android:layout_above="@+id/bio"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/bio"
+            style="@style/AuthEditText"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:ems="10"
+            android:hint="@string/bio"
+            android:inputType="textMultiLine" />
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/buttonDivider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_txt_layout"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/content_description_divider"
+        android:src="@drawable/button_divider" />
+
+    <Button
+        android:id="@+id/signup"
+        style="@style/AuthButton"
+        android:layout_alignLeft="@id/edit_txt_layout"
+        android:layout_below="@id/edit_txt_layout"
+        android:layout_marginRight="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_toLeftOf="@id/buttonDivider"
+        android:text="@string/sign_up" />
+
+    <Button
+        android:id="@+id/cancel"
+        style="@style/AuthButton"
+        android:layout_alignRight="@id/edit_txt_layout"
+        android:layout_below="@id/edit_txt_layout"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_toRightOf="@id/buttonDivider"
+        android:text="@string/cancel" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonDivider"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp" />
+
+
+</RelativeLayout>

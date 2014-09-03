@@ -2,6 +2,7 @@ package amgh.no.rabbitapp.activities.recipient;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,8 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amgh.no.rabbitapp.R;
-import amgh.no.rabbitapp.parse.Messenger;
-import amgh.no.rabbitapp.parse.UserRepository;
+import amgh.no.rabbitapp.activities.MainActivity;
+import amgh.no.rabbitapp.parse.entity.Message;
+import amgh.no.rabbitapp.parse.repository.UserRepository;
 import amgh.no.rabbitapp.treehouse.FileHelper;
 
 public class RecipientActivity extends ListActivity {
@@ -37,8 +39,10 @@ public class RecipientActivity extends ListActivity {
     private MenuItem mSendMenuItem;
     private Uri mMediaUri;
     private String mFileType;
-    private Messenger mMessenger;
+    private String mSms = null;
+    private Message mMessage;
     private ProgressBar mProgressBar;
+    private AlertDialog mDialog;
 
 
     @Override
@@ -54,7 +58,8 @@ public class RecipientActivity extends ListActivity {
         Intent intent = getIntent();
         if (intent != null) {
             mMediaUri = intent.getData();
-            mFileType = intent.getExtras().getString(Messenger.KEY_FILE_TYPE);
+            mFileType = intent.getExtras().getString(Message.KEY_FILE_TYPE);
+            mSms = intent.getExtras().getString(Message.TYPE_SMS);
         }
     }
 
@@ -63,7 +68,6 @@ public class RecipientActivity extends ListActivity {
         super.onResume();
         setProgressBarIndeterminateVisibility(true);
         mUserRepository.getFriendsFromRepository(findFriendsInBackground);
-        Log.i(TAG, "onResume");
     }
 
     @Override
@@ -85,12 +89,13 @@ public class RecipientActivity extends ListActivity {
             mSendMenuItem.setVisible(false);
             mProgressBar.setVisibility(View.VISIBLE);
             setProgressBarIndeterminateVisibility(true);
-            createMessage();
-            if (mMessenger != null) {
+            mMessage = createMessage();
+            if (mMessage != null) {
                 DoInBackground doInBackground = new DoInBackground();
                 doInBackground.execute();
             } else {
-                showErrorAlert(getString(R.string.error_dialog_select_button));
+                showErrorAlert(getString(R.string.error_dialog_select_button), dialogListener);
+
             }
             return true;
         }
@@ -115,17 +120,18 @@ public class RecipientActivity extends ListActivity {
 
 
     }
-    private void showErrorAlert(String s){
+    private void showErrorAlert(String s, DialogInterface.OnClickListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.error_dialog_message))
+        builder.setTitle(getString(R.string.error_title_some_dialog))
                 .setMessage(s)
-                .setPositiveButton(android.R.string.ok, null)
-                .create().show();
+                .setPositiveButton(android.R.string.ok, listener);
+                mDialog = builder.create();
+                mDialog.show();
 
     }
-    private void sendMessage(){
+    private void sendMessage(Message message){
 
-        mMessenger.saveInBackground(new SaveCallback() {
+        message.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 setProgressBarIndeterminateVisibility(false);
@@ -135,14 +141,28 @@ public class RecipientActivity extends ListActivity {
                             Toast.LENGTH_LONG).show();
                 }
                 else {
-                    showErrorAlert(getString(R.string.error_dialog_send_message));
+                    showErrorAlert(getString(R.string.error_dialog_send_message), null);
                 }
-                finish();
+                if (mSms != null){
+                    Intent intent = new Intent(RecipientActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    finish();
+                }
+
             }
         });
     }
-    private void createMessage() {
+    private Message createMessage() {
 
+        Message message = null;
+        if (mSms != null) {
+            //it is a sms
+            message = new Message();
+            message = message.createSms(mSms,
+                    mFileType, getRecipientIds());
+            return message;
+        }
         ParseFile file = null;
         byte[] fileBytes = FileHelper.getByteArrayFromFile(this,
                 mMediaUri);
@@ -150,7 +170,7 @@ public class RecipientActivity extends ListActivity {
             //return null
         }
         else {
-            if (mFileType.equals(Messenger.TYPE_IMAGE)){
+            if (mFileType.equals(Message.TYPE_IMAGE)){
                 fileBytes = FileHelper.reduceImageForUpload(fileBytes);
             }
             String fileName = FileHelper.getFileName(this, mMediaUri, mFileType);
@@ -162,22 +182,23 @@ public class RecipientActivity extends ListActivity {
 
         }
         if (file != null){
-            mMessenger = new Messenger(file,
+            message = new Message();
+            message = message.createFileMessage(file,
                     mFileType, getRecipientIds());
-        } else {
-            mMessenger = null;
+
         }
-
-
-
+        return message;
     }
     private void addNameToBar(int position) {
 
         String s = getTitle().toString();
+        boolean firstName = false;
         if (s.equals(getResources().getString(R.string.title_activity_recipient))) {
             s = "";
+            firstName = true;
         }
-        s += mUserRepository.getFriendsByPosition(position).getUsername() + " ";
+        s += (firstName == true ?  "" :  ", ") +
+                mUserRepository.getFriendsByPosition(position).getUsername();
         setTitle(s);
     }
     private void removeNameFromBar(int position, boolean hasName) {
@@ -186,7 +207,7 @@ public class RecipientActivity extends ListActivity {
             return;
         }
         String s = getTitle().toString();
-        s = s.replace(mUserRepository.getFriendsByPosition(position).getUsername() + " ", "");
+        s = s.replace(", " + mUserRepository.getFriendsByPosition(position).getUsername(), "");
         setTitle(s);
     }
 
@@ -220,8 +241,15 @@ public class RecipientActivity extends ListActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            sendMessage();
+            sendMessage(mMessage);
             return null;
         }
     }
+    private DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            mDialog.dismiss();
+            finish();
+        }
+    };
 }

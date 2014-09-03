@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +19,10 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
-import amgh.no.rabbitapp.activities.MainActivity;
 import amgh.no.rabbitapp.R;
-import amgh.no.rabbitapp.hepler.Helper;
+import amgh.no.rabbitapp.activities.MainActivity;
 import amgh.no.rabbitapp.activities.signup.SignUpActivity;
+import amgh.no.rabbitapp.apphelper.Helper;
 
 
 public class SignInActivity extends Activity {
@@ -43,10 +42,6 @@ public class SignInActivity extends Activity {
             mSingInButton.setOnClickListener(singInButtonListener);
             setProgressBarIndeterminateVisibility(false);
             if (user != null) {
-
-                Log.d(TAG, e == null ? "JA NULL" : "nie");
-                Log.d(TAG, user.toString());
-                Log.v(TAG, "Registered user");
                 Toast.makeText(SignInActivity.this,
                         "You have now successfully signed up", Toast.LENGTH_LONG).show();
 
@@ -57,7 +52,6 @@ public class SignInActivity extends Activity {
             } else {
                 Helper.showErrorDialog(SignInActivity.this, R.string.error_dialog_title,
                         R.string.login_error_message);
-                Log.d(TAG, e.getMessage());
             }
 
         }
@@ -98,8 +92,9 @@ public class SignInActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_signin);
+        getActionBar().hide();
 
-        mSignUpTextView = (TextView) findViewById(R.id.signin_txt);
+        mSignUpTextView = (TextView) findViewById(R.id.sign_up_text);
         mSignUpTextView.setOnClickListener(signUpOnClickListener);
 
         mUsername = setEditText(R.id.username);
