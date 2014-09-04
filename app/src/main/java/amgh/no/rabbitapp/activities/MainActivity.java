@@ -94,7 +94,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             // this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
+                            /*.setText(mSectionsPagerAdapter.getPageTitle(i))*/
+                            .setIcon(mSectionsPagerAdapter.getIcon(i))
                             .setTabListener(this));
         }
 

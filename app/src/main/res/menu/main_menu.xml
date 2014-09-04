@@ -3,7 +3,7 @@
     tools:context=".MainActivity">
 
 
-    <item android:icon="@drawable/ic_action_overflow"
+    <item android:icon="@drawable/ic_menu_overflow"
         android:id="@+id/action_menu"
         android:orderInCategory="4"
         android:menuCategory="system"
@@ -26,7 +26,7 @@
 
     <item android:id="@+id/action_camera"
         android:title="@string/action_camera"
-        android:icon="@drawable/ic_action_camera"
+        android:icon="@drawable/ic_menu_camera"
         android:orderInCategory="1"
         android:menuCategory="system"
         android:showAsAction="always" />

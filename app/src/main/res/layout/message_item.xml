@@ -1,43 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:background="@android:color/transparent">
 
-    <ImageView
-        android:id="@+id/message_icon"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:paddingLeft="@dimen/message_list_item_vertical_margin"
-        android:paddingRight="@dimen/message_list_item_vertical_margin"
-        android:src="@drawable/ic_action_picture"
-        android:contentDescription="@string/description" />
+        android:layout_marginLeft="@dimen/inbox_vertical_margin"
+        android:layout_marginRight="@dimen/inbox_vertical_margin"
+        android:layout_marginTop="@dimen/inbox_horizontal_margin"
+        android:background="@android:color/white">
 
-    <TextView
-        android:id="@+id/message_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_toEndOf="@+id/message_icon"
-        android:layout_centerVertical="true"
-        android:text=""
-        android:layout_toRightOf="@+id/message_icon" />
+        <ImageView
+            android:id="@+id/message_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/description"
+            android:paddingLeft="@dimen/message_list_item_vertical_margin"
+            android:paddingRight="@dimen/message_list_vertical_padding"
+            android:src="@drawable/ic_picture" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/message_date"
-        android:layout_alignBottom="@+id/message_icon"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:paddingRight="@dimen/message_list_item_vertical_margin"
-        android:paddingLeft="0dp"/>
+        <TextView
+            android:id="@+id/message_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/message_icon"
+            android:layout_alignParentLeft="true"
+            android:text="Test name"
+            android:paddingTop="@dimen/message_list_vertical_padding"
+            android:paddingLeft="@dimen/message_list_vertical_padding"
+            android:paddingRight="@dimen/zero_value"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/message_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/message_label"
+            android:paddingBottom="@dimen/message_list_vertical_padding"
+            android:layout_toLeftOf="@id/message_icon"
+            android:paddingLeft="@dimen/message_list_vertical_padding"
+            android:paddingRight="@dimen/zero_value"
+            android:textSize="12sp"
+            android:textColor="@color/light_grey"
+            android:text="test date"/>
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,8 @@ public class InboxFragment extends ListFragment {
     private AlertDialog mDialog;
     private ArrayList<Message> mMessages;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -58,12 +61,23 @@ public class InboxFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
+        mSwipeRefreshLayout =
+                (SwipeRefreshLayout) rootView.findViewById(R.id.swipeToRefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(refreshListener);
+        mSwipeRefreshLayout.setColorSchemeColors(R.color.swipeRefresh1,
+                R.color.swipeRefresh2,
+                R.color.swipeRefresh3,
+                R.color.swipeRefresh4);
         return rootView;
     }
     @Override
     public void onResume(){
         super.onResume();
         getActivity().setProgressBarIndeterminateVisibility(true);
+        getMessages();
+    }
+
+    private void getMessages() {
         if (mMessageRepository != null){
             GetMessagesInBackground getMessagesInBackground = new GetMessagesInBackground();
             getMessagesInBackground.execute();
@@ -140,6 +154,9 @@ public class InboxFragment extends ListFragment {
         public void done(List<Message> messages, ParseException e) {
             if (getActivity() != null){
                 getActivity().setProgressBarIndeterminateVisibility(false);}
+            if (mSwipeRefreshLayout.isRefreshing()) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
             if (e == null) {
                 mMessages = (ArrayList<Message>)messages;
                 if (messages.size() == 0){
@@ -177,5 +194,10 @@ public class InboxFragment extends ListFragment {
         Toast.makeText(getActivity(),
                 s, Toast.LENGTH_SHORT).show();
     }
-
+    private SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            getMessages();
+        }
+    };
 }

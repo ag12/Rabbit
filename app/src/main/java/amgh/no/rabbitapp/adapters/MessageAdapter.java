@@ -1,6 +1,7 @@
 package amgh.no.rabbitapp.adapters;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,9 +49,9 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         Message message = mMassages.get(position);
 
         if (message.getFileType().equals(Message.TYPE_IMAGE)) {
-            holder.iconImageView.setImageResource(R.drawable.ic_action_picture);
+            holder.iconImageView.setImageResource(R.drawable.ic_picture);
         } else if (message.getFileType().equals(Message.TYPE_VIDEO)) {
-            holder.iconImageView.setImageResource(R.drawable.ic_action_play_over_video);
+            holder.iconImageView.setImageResource(R.drawable.ic_video);
         } else {
             holder.iconImageView.setImageResource(R.drawable.ic_action_chat);
         }
@@ -59,8 +60,17 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         return convertView;
     }
 
-    private String getTime(Date sendDate){
+    private String getTime2(Date createdAt){
+        long now = new Date().getTime();
+        String convertedDate = DateUtils.getRelativeTimeSpanString(
+                createdAt.getTime(),
+                now,
+                DateUtils.SECOND_IN_MILLIS).toString();
+        return convertedDate;
 
+    }
+    private String getTime(Date sendDate){
+        //Did not know better :D
         DateTime sendDateTime = new DateTime(sendDate);
         Period p = new Period(sendDateTime, new DateTime());
         int hour = p.getHours();
