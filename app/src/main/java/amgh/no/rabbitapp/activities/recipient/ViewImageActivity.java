@@ -1,8 +1,8 @@
 package amgh.no.rabbitapp.activities.recipient;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -18,12 +18,13 @@ public class ViewImageActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_view_image);
         mImageView = (ImageView) findViewById(R.id.imageView);
-        Uri uri = getIntent().getData();
-        Picasso.with(this).load(uri.toString()).into(mImageView);
+        Picasso.with(this).load(getIntent().getData().toString()).into(mImageView);
 
-        new Timer().schedule(timerTasks,4*1000);
+        new Timer().schedule(timerTasks,5*1000);
     }
     private TimerTask timerTasks = new TimerTask() {
         @Override

@@ -13,6 +13,7 @@ public class Message extends ParseObject {
 
     public static final String TAG = Message.class.getSimpleName();
 
+    public static final String KEY_USER_ID = "userId";
     public static final String CLASS_MESSAGES = "Message";
     public static final String KEY_RECIPIENT_IDS = "recipientsIds";
     public static final String KEY_SENDER_ID = "senderId";

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="amgh.no.rabbitapp" >
+    package="amgh.no.rabbitapp">
 
     <uses-feature android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,16 +12,30 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="amgh.no.rabbitapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="amgh.no.rabbitapp..permission.C2D_MESSAGE" />
+
+
     <application
-        android:name=".main.RabbitApplication"
+        android:name=".main.RibbitApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Ribbit" >
+        android:theme="@style/Theme.Ribbit">
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,23 +45,21 @@
         <activity
             android:name=".activities.signin.SignInActivity"
             android:label="@string/title_activity_sign_in"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activities.signup.SignUpActivity"
             android:label="@string/title_activity_sign_up"
             android:parentActivityName=".activities.signin.SignInActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".signin.SignInActivity" >
-            </meta-data>
+                android:value=".signin.SignInActivity"></meta-data>
         </activity>
         <activity
             android:name=".activities.friend.EditFriendsActivity"
             android:label="@string/title_activity_edit_friends"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="amgh.no.rabbitapp.activities.MainActivity" />
@@ -56,7 +68,7 @@
             android:name=".activities.recipient.RecipientActivity"
             android:label="@string/title_activity_recipient"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="amgh.no.rabbitapp.activities.MainActivity" />
@@ -65,7 +77,7 @@
             android:name=".activities.sms.SmsActivity"
             android:label="@string/title_activity_sms"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="amgh.no.rabbitapp.activities.MainActivity" />
@@ -79,6 +91,27 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="amgh.no.rabbitapp.activities.MainActivity" />
         </activity>
-    </application>
 
+
+        <service android:name="com.parse.PushService" />
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="mgh.no.rabbitapp" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
+
+    </application>
 </manifest>

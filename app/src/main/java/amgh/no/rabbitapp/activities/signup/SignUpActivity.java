@@ -20,6 +20,7 @@ import com.parse.SignUpCallback;
 import amgh.no.rabbitapp.R;
 import amgh.no.rabbitapp.activities.MainActivity;
 import amgh.no.rabbitapp.apphelper.Helper;
+import amgh.no.rabbitapp.main.RibbitApplication;
 
 public class SignUpActivity extends Activity {
 
@@ -28,7 +29,7 @@ public class SignUpActivity extends Activity {
     protected EditText mUsername;
     protected EditText mPassword;
     private EditText mEmail;
-    private EditText mBio;
+    //private EditText mBio;
     protected Button mSignUpButton;
     protected Button mCancelButton;
     private ProgressBar mProgressBar;
@@ -44,7 +45,7 @@ public class SignUpActivity extends Activity {
         mProgressBar.setVisibility(View.INVISIBLE);
         mUsername = (EditText) findViewById(R.id.username);
         mPassword = (EditText) findViewById(R.id.password);
-        mBio = (EditText) findViewById(R.id.bio);
+        //mBio = (EditText) findViewById(R.id.bio);
         mEmail = (EditText) findViewById(R.id.email);
 
         mSignUpButton = (Button) findViewById(R.id.signup);
@@ -68,6 +69,7 @@ public class SignUpActivity extends Activity {
             mProgressBar.setVisibility(View.INVISIBLE);
             setProgressBarIndeterminateVisibility(false);
             if (e == null) {
+                RibbitApplication.updateParseInstallation(SignUpActivity.this, ParseUser.getCurrentUser());
                 Log.v(TAG, "Registered user");
                 Toast.makeText(SignUpActivity.this,
                         "You have now successfully signed up", Toast.LENGTH_LONG).show();
@@ -92,7 +94,7 @@ public class SignUpActivity extends Activity {
             String username = Helper.trimEditTextInput(mUsername);
             String password = Helper.trimEditTextInput(mPassword);
             String email = Helper.trimEditTextInput(mEmail);
-            String bio = Helper.trimEditTextInput(mBio);
+            //String bio = Helper.trimEditTextInput(mBio);
             String[] strings = {username, password, email};
             if (!Helper.isValid(strings)) {
                 Helper.showErrorDialog(SignUpActivity.this,R.string.error_dialog_title,
@@ -104,7 +106,7 @@ public class SignUpActivity extends Activity {
                 newUser.setUsername(username);
                 newUser.setPassword(password);
                 newUser.setEmail(email);
-                newUser.put("bio", bio);
+                //newUser.put("bio", bio);
                 mProgressBar.setVisibility(View.VISIBLE);
                 newUser.signUpInBackground(signUpCallback);
             }

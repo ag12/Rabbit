@@ -1,39 +1,44 @@
 package amgh.no.rabbitapp.activities.friend;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import amgh.no.rabbitapp.R;
+import amgh.no.rabbitapp.adapters.UserAdapter;
 import amgh.no.rabbitapp.apphelper.Helper;
 import amgh.no.rabbitapp.parse.repository.UserRepository;
 
-public class EditFriendsActivity extends ListActivity {
+public class EditFriendsActivity extends Activity {
 
     public static final String TAG = EditFriendsActivity.class.getSimpleName();
     private UserRepository mUserRepository;
-    private ArrayAdapter<String> mAdapter;
+    private UserAdapter mAdapter;
     private ProgressBar progressBar;
     private List<ParseUser> mUserFriendsList;
+    private GridView mGridView;
 
     private FindCallback<ParseUser> findFriendsInBackground = new FindCallback<ParseUser>() {
         @Override
         public void done(List<ParseUser> parseUsers, ParseException e) {
             progressBar.setVisibility(View.INVISIBLE);
-            getListView().setVisibility(View.VISIBLE);
+            mGridView.setVisibility(View.VISIBLE);
             if (e == null) {
                 //Success
                 mUserRepository.setFriends(parseUsers);
@@ -41,7 +46,7 @@ public class EditFriendsActivity extends ListActivity {
                 for(ParseUser user : mUserRepository.getUsers()) {
                     for(ParseUser friend : mUserRepository.getFriends()) {
                         if (friend.getObjectId().equals(user.getObjectId())) {
-                            getListView().setItemChecked(i, true);
+                            mGridView.setItemChecked(i, true);
                         }
                     }
                     i++;
@@ -58,9 +63,10 @@ public class EditFriendsActivity extends ListActivity {
                 //Success
                 setProgressBarIndeterminateVisibility(false);
                 mUserRepository.setUsers(parseUsers);
-                mAdapter = new ArrayAdapter<String>(EditFriendsActivity.this,
-                        android.R.layout.simple_list_item_checked, mUserRepository.getUserNames());
-                setListAdapter(mAdapter);
+                mAdapter = new UserAdapter(
+                        EditFriendsActivity.this,
+                        (ArrayList<ParseUser>) mUserRepository.getUsers());
+                mGridView.setAdapter(mAdapter);
                 addCheckMarks();
                 Log.d(TAG, "Got all users");
             } else {
@@ -88,14 +94,18 @@ public class EditFriendsActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_edit_friends);
+        setContentView(R.layout.user_grid);
         mUserRepository = new UserRepository();
-        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        mGridView = (GridView) findViewById(R.id.friendsGrid);
+        mGridView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE);
+        TextView empty = (TextView) findViewById(android.R.id.empty);
+        mGridView.setEmptyView(empty);
+        mGridView.setOnItemClickListener(mGridViewOnClickListener);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        getListView().setVisibility(View.INVISIBLE);
+        mGridView.setVisibility(View.INVISIBLE);
     }
     @Override
     protected void onResume(){
@@ -104,24 +114,6 @@ public class EditFriendsActivity extends ListActivity {
         if (mUserRepository.getCurrentUser() != null) {
             mUserRepository.getUsersFromRepository(findUsersInBackground);
         }
-    }
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        ParseUser friend = mUserRepository.getUsersByPosition(position);
-        if (getListView().isItemChecked(position)) {
-            mUserRepository
-                    .setUserRelation(
-                            friend);
-        } else {
-            mUserRepository.removeUserRelation(friend);
-        }
-        //To not exhausting the main thread, after getting
-        //I/Choreographer: Skipped 60 frames!  The application may be doing too much work on its main thread.
-
-        DoInBackground doInBackground = new DoInBackground();
-        doInBackground.execute();
-
     }
     private void addCheckMarks(){
         mUserRepository.getFriendsFromRepository(findFriendsInBackground);
@@ -134,4 +126,29 @@ public class EditFriendsActivity extends ListActivity {
             return null;
         }
     }
+    private AdapterView.OnItemClickListener mGridViewOnClickListener =
+            new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            ImageView checkImageView =
+                    (ImageView) view.findViewById(R.id.checkImageView);
+
+            ParseUser friend = mUserRepository.getUsersByPosition(position);
+
+            if (mGridView.isItemChecked(position)) {
+                mUserRepository
+                        .setUserRelation(
+                                friend);
+                checkImageView.setVisibility(View.VISIBLE);
+            } else {
+                mUserRepository.removeUserRelation(friend);
+                checkImageView.setVisibility(View.INVISIBLE);
+            }
+            //To not exhausting the main thread, after getting
+            //I/Choreographer: Skipped 60 frames!  The application may be doing too much work on its main thread.
+            DoInBackground doInBackground = new DoInBackground();
+            doInBackground.execute();
+        }
+    };
 }

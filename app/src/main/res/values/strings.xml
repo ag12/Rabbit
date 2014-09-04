@@ -58,5 +58,6 @@
     <string name="sub_title">Experimental project</string>
     <string name="cancel">CANCEL</string>
     <string name="content_description_divider">Button divider</string>
+    <string name="push_notification_message">You have a new message from %s!</string>
 
 </resources>

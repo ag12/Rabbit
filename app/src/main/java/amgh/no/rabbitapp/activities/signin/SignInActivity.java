@@ -21,6 +21,7 @@ import amgh.no.rabbitapp.R;
 import amgh.no.rabbitapp.activities.MainActivity;
 import amgh.no.rabbitapp.activities.signup.SignUpActivity;
 import amgh.no.rabbitapp.apphelper.Helper;
+import amgh.no.rabbitapp.main.RibbitApplication;
 
 
 public class SignInActivity extends Activity {
@@ -40,6 +41,7 @@ public class SignInActivity extends Activity {
             mSingInButton.setOnClickListener(singInButtonListener);
             setProgressBarIndeterminateVisibility(false);
             if (user != null) {
+                RibbitApplication.updateParseInstallation(SignInActivity.this, user);
                 Toast.makeText(SignInActivity.this,
                         "You have now successfully signed up", Toast.LENGTH_LONG).show();
 

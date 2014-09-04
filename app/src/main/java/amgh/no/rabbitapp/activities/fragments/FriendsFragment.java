@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class FriendsFragment extends Fragment {
     private UserRepository mUserRepository;
     private GridView mGridView;
     private UserAdapter mUserAdapter;
+    private ProgressBar progressBar;
 
     @Override
     public void onAttach(Activity activity) {
@@ -44,9 +46,11 @@ public class FriendsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+        View rootView = inflater.inflate(R.layout.user_grid, container, false);
         mUserRepository = new UserRepository();
         mGridView = (GridView) rootView.findViewById(R.id.friendsGrid);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
         TextView empty = (TextView) rootView.findViewById(android.R.id.empty);
         mGridView.setEmptyView(empty);
         return rootView;

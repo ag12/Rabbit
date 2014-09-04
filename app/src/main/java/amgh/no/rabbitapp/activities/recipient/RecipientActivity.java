@@ -1,7 +1,7 @@
 package amgh.no.rabbitapp.activities.recipient;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,9 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -28,11 +31,12 @@ import java.util.List;
 
 import amgh.no.rabbitapp.R;
 import amgh.no.rabbitapp.activities.MainActivity;
+import amgh.no.rabbitapp.adapters.UserAdapter;
 import amgh.no.rabbitapp.parse.entity.Message;
 import amgh.no.rabbitapp.parse.repository.UserRepository;
 import amgh.no.rabbitapp.treehouse.FileHelper;
 
-public class RecipientActivity extends ListActivity {
+public class RecipientActivity extends Activity {
 
     private static final String TAG = RecipientActivity.class.getSimpleName();
     private UserRepository mUserRepository;
@@ -43,17 +47,21 @@ public class RecipientActivity extends ListActivity {
     private Message mMessage;
     private ProgressBar mProgressBar;
     private AlertDialog mDialog;
-
+    private GridView mGridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_recipient);
+        setContentView(R.layout.user_grid);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.INVISIBLE);
         mUserRepository = new UserRepository();
-        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        mGridView = (GridView) findViewById(R.id.friendsGrid);
+        mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        TextView empty = (TextView) findViewById(android.R.id.empty);
+        mGridView.setEmptyView(empty);
+        mGridView.setOnItemClickListener(mGridViewOnItemClickListener);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         if (intent != null) {
@@ -85,7 +93,7 @@ public class RecipientActivity extends ListActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_send) {
-            getListView().setVisibility(View.INVISIBLE);
+            mGridView.setVisibility(View.INVISIBLE);
             mSendMenuItem.setVisible(false);
             mProgressBar.setVisibility(View.VISIBLE);
             setProgressBarIndeterminateVisibility(true);
@@ -100,25 +108,6 @@ public class RecipientActivity extends ListActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-        boolean leastOne = l.getCheckedItemCount() > 0;
-        if (leastOne) {
-            mSendMenuItem.setVisible(true);
-        } else {
-            mSendMenuItem.setVisible(false);
-        }
-        if (l.isItemChecked(position)){
-            addNameToBar(position);
-        } else {
-            removeNameFromBar(position, leastOne);
-        }
-
-
     }
     private void showErrorAlert(String s, DialogInterface.OnClickListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -139,6 +128,7 @@ public class RecipientActivity extends ListActivity {
                     Toast.makeText(
                             RecipientActivity.this, "Success",
                             Toast.LENGTH_LONG).show();
+                    sendPushNotification();
                 }
                 else {
                     showErrorAlert(getString(R.string.error_dialog_send_message), null);
@@ -213,8 +203,8 @@ public class RecipientActivity extends ListActivity {
 
     private ArrayList<String> getRecipientIds(){
         ArrayList<String> ids = new ArrayList<String>();
-        for (int i = 0; i < getListView().getCount(); i++){
-            if (getListView().isItemChecked(i)) {
+        for (int i = 0; i < mGridView.getCount(); i++){
+            if (mGridView.isItemChecked(i)) {
                 ids.add(mUserRepository.getFriendsByPosition(i).getObjectId());
             }
         }
@@ -227,10 +217,10 @@ public class RecipientActivity extends ListActivity {
             setProgressBarIndeterminateVisibility(false);
             if (e == null) {
                 mUserRepository.setFriends(parseUsers);
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
-                        (RecipientActivity.this, android.R.layout.simple_list_item_checked,
-                                mUserRepository.getFriendNames());
-                setListAdapter(arrayAdapter);
+                UserAdapter arrayAdapter = new UserAdapter
+                        (RecipientActivity.this,
+                                (ArrayList<ParseUser>) mUserRepository.getFriends());
+                mGridView.setAdapter(arrayAdapter);
             } else {
                 Log.d(TAG, e.getMessage());
             }
@@ -252,4 +242,42 @@ public class RecipientActivity extends ListActivity {
             finish();
         }
     };
+    private AdapterView.OnItemClickListener mGridViewOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            boolean leastOne = mGridView.getCheckedItemCount() > 0;
+            if (leastOne) {
+                mSendMenuItem.setVisible(true);
+            } else {
+                mSendMenuItem.setVisible(false);
+            }
+            if (mGridView.isItemChecked(position)){
+                addNameToBar(position);
+            } else {
+                removeNameFromBar(position, leastOne);
+            }
+            ImageView checkImageView =
+                    (ImageView) view.findViewById(R.id.checkImageView);
+
+            if (mGridView.isItemChecked(position)) {
+                checkImageView.setVisibility(View.VISIBLE);
+            } else {
+                checkImageView.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
+
+    private void sendPushNotification(){
+       /* ParseQuery<ParseInstallation> query = ParseInstallation.getQuery();
+        query.whereContainedIn(Message.KEY_USER_ID, mMessage.getRecipientIds());
+
+        //Send push
+        ParsePush push = new ParsePush();
+        push.setQuery(query);
+        push.setMessage(getString(R.string.push_notification_message,
+                ParseUser.getCurrentUser().getUsername()));
+        push.sendInBackground();
+        */
+    }
 }

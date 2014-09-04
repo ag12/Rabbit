@@ -35,14 +35,14 @@
             android:hint="@string/email"
             android:inputType="textEmailAddress" />
 
-        <EditText
+        <!--<EditText
             android:id="@+id/bio"
             style="@style/AuthEditText"
             android:layout_height="60dp"
             android:layout_centerVertical="true"
             android:ems="10"
             android:hint="@string/bio"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine" />-->
 
 
     </LinearLayout>
